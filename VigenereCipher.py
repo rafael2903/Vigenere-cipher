@@ -1,7 +1,18 @@
 class VigenereCipher():
+    ENCODE = 'encode'
+    DECODE = 'decode'
 
     @staticmethod
-    def pad_key(key, text):
+    def encode(key: str, plain_text: str):
+        return VigenereCipher.translate(key, plain_text, VigenereCipher.ENCODE)
+
+    @staticmethod
+    def decode(key: str, cipher_text: str):
+        return VigenereCipher.translate(key, cipher_text, VigenereCipher.DECODE)
+
+    @staticmethod
+    def pad_key(key: str, text: str):
+        key = key.lower()
         text_length = len(text)
         key_length = len(key)
 
@@ -15,14 +26,14 @@ class VigenereCipher():
         return key_stream
 
     @staticmethod
-    def encode(key, plain_text):
-        cipher_text = ''
-        key_stream = VigenereCipher.pad_key(key, plain_text)
+    def translate(key: str, text: str, mode: str):
+        key_stream = VigenereCipher.pad_key(key, text)
+        translated_text = ''
         i = 0
 
-        for letter in plain_text:
+        for letter in text:
             if not letter.isalpha() or not letter.isascii():
-                cipher_text += letter
+                translated_text += letter
                 continue
 
             base_char_code = ord('a') if letter.islower() else ord('A')
@@ -30,37 +41,16 @@ class VigenereCipher():
             key_letter_position = ord(key_letter) - ord('a')
             letter_position = ord(letter) - base_char_code
 
-            cipher_letter_position = (
-                letter_position + key_letter_position) % 26
-            cipher_letter = chr(base_char_code + cipher_letter_position)
+            if mode is VigenereCipher.ENCODE:
+                translated_letter_position = (
+                    letter_position + key_letter_position) % 26
+            else:
+                translated_letter_position = (
+                    letter_position - key_letter_position) % 26
 
-            cipher_text += cipher_letter
+            translated_letter = chr(
+                base_char_code + translated_letter_position)
+            translated_text += translated_letter
             i += 1
 
-        return cipher_text
-
-    @staticmethod
-    def decode(key, cipher_text):
-        key_stream = VigenereCipher.pad_key(key, cipher_text)
-        plain_text = ''
-        i = 0
-
-        for letter in cipher_text:
-            if not letter.isalpha() or not letter.isascii():
-                plain_text += letter
-                continue
-
-            base_char_code = ord('a') if letter.islower() else ord('A')
-            key_letter = key_stream[i]
-            key_letter_position = ord(key_letter) - ord('a')
-            letter_position = ord(letter) - base_char_code
-
-            plain_letter_position = letter_position - key_letter_position
-            if plain_letter_position < 0:
-                plain_letter_position += 26
-
-            plain_letter = chr(base_char_code + plain_letter_position)
-            plain_text += plain_letter
-            i += 1
-
-        return plain_text
+        return translated_text
