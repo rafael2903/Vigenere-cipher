@@ -73,17 +73,17 @@ def translate(key: str, text: str, mode: str):
             translated_text += letter
             continue
 
-        base_char_code = ord('a') if letter.islower() else ord('A')
         key_letter = key_stream[i]
-        key_letter_position = ord(key_letter) - ord('a')
+        shift = ord(key_letter) - ord('a')
+        base_char_code = ord('a') if letter.islower() else ord('A')
         letter_position = ord(letter) - base_char_code
 
         if mode is Mode.ENCODE:
             translated_letter_position = (
-                letter_position + key_letter_position) % 26
+                letter_position + shift) % 26
         else:
             translated_letter_position = (
-                letter_position - key_letter_position) % 26
+                letter_position - shift) % 26
 
         translated_letter = chr(
             base_char_code + translated_letter_position)
