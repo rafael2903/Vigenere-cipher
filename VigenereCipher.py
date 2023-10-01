@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from collections import Counter
 from enum import Enum
 
+
 class Mode(Enum):
     ENCODE = 'encode'
     DECODE = 'decode'
@@ -91,20 +92,29 @@ def translate(key: str, text: str, mode: str):
 
     return translated_text
 
-
 def find_repeated_groups(text: str):
     repeated_groups = dict()
+    MIN_REPETITIONS = 2 if len(text) < 200 else 3
+    MIN_GROUP_LENGTH = 3 if len(text) < 200 else 5
+    i = 0
 
-    for i in range(len(text)):
-        if i + 2 > len(text):
-            break
-        search_string = text[i:i+2]
-        if search_string not in repeated_groups:
+    while (i < len(text)):
+        j = i + 1
+        while (j < len(text)):
+            search_string = text[i:j]
             matches_index = [m.start()
                              for m in re.finditer(search_string, text)]
-            if len(matches_index) >= 2:
-                repeated_groups[search_string] = matches_index
-
+            if len(matches_index) >= MIN_REPETITIONS:
+                last_matches = (search_string, matches_index)
+            elif last_matches:
+                group, indexes = last_matches
+                if group not in repeated_groups and len(group) >= MIN_GROUP_LENGTH:
+                    repeated_groups[group] = indexes
+                break
+            else:
+                break
+            j += 1
+        i = j
     return repeated_groups
 
 
