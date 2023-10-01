@@ -37,10 +37,10 @@ class Test(unittest.TestCase):
 
     def test_discover_key_portuguese(self):
         self.assertEqual(discover_key(self.simple_cipher_text,
-                                      Language.PORTUGUESE), self.key)
+                                      Language.PORTUGUES), self.key)
 
     def test_break_cipher(self):
-        plain_text = break_cipher(self.complex_cipher_text, Language.PORTUGUESE)
+        plain_text = break_cipher(self.complex_cipher_text)
         self.assertEqual(plain_text, self.complex_plain_text)
 
     @classmethod

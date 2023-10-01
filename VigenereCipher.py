@@ -1,7 +1,7 @@
 import re
+from argparse import ArgumentParser
 from collections import Counter
 from enum import Enum
-
 
 class Mode(Enum):
     ENCODE = 'encode'
@@ -10,7 +10,7 @@ class Mode(Enum):
 
 class Language(Enum):
     ENGLISH = 'english'
-    PORTUGUESE = 'portuguese'
+    PORTUGUES = 'português'
 
 
 letters_frequencies = {
@@ -23,7 +23,7 @@ letters_frequencies = {
         'u': 0.0276, 'v': 0.0098, 'w': 0.0236, 'x': 0.0015,
         'y': 0.0197, 'z': 0.0007
     },
-    Language.PORTUGUESE: {
+    Language.PORTUGUES: {
         'a': 0.1463, 'b': 0.0104, 'c': 0.0388, 'd': 0.0499,
         'e': 0.1257, 'f': 0.0102, 'g': 0.0130, 'h': 0.0128,
         'i': 0.0618, 'j': 0.0040, 'k': 0.0002, 'l': 0.0278,
@@ -188,3 +188,59 @@ def break_cipher(cipher_text: str, language=Language.ENGLISH):
     if not key:
         return
     return decode(key, cipher_text)
+
+
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('-i', '--input_file', type=str, required=True)
+    parser.add_argument('-o', '--output_file', type=str, default='result.txt')
+    parser.add_argument(
+        '-e', '--encode', action='store_true', dest='encode_flag')
+    parser.add_argument(
+        '-d', '--decode', action='store_true', dest='decode_flag')
+    parser.add_argument(
+        '-b', '--break', action='store_true', dest='break_flag')
+    parser.add_argument('-k', '--key', type=str)
+    parser.add_argument('-l', '--language', type=str, choices=[
+                        Language.ENGLISH.name, Language.PORTUGUES.name], default=Language.ENGLISH.name)
+    args = parser.parse_args()
+
+    input_file = args.input_file
+    output_file = args.output_file
+    encode_flag = args.encode_flag
+    decode_flag = args.decode_flag
+    break_flag = args.break_flag
+    key = args.key
+    language = Language[args.language]
+
+    with open(input_file) as f:
+        text = f.read()
+        output_file = open(output_file, 'w')
+
+        if break_flag:
+            key = discover_key(text, language)
+            if key:
+                print('key found:', key)
+                plain_text = decode(key, text)
+                output_file.write(plain_text)
+                print('Decoded text saved into', output_file.name)
+            else:
+                print('Unable to break the cipher')
+        elif encode_flag:
+            if key:
+                cipher_text = encode(key, text)
+                output_file.write(cipher_text)
+                print('Encoded text saved into', output_file.name)
+            else:
+                print('Key parameter is missing')
+        elif decode_flag:
+            if key:
+                plain_text = decode(key, text)
+                output_file.write(plain_text)
+                print('Decoded text saved into', output_file.name)
+            else:
+                print('Key parameter is missing')
+        else:
+            print('Choose an option (--encode, --decode, --break)')
+
+        output_file.close()
