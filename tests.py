@@ -1,6 +1,6 @@
 import unittest
 
-from VigenereCipher import Language, break_cipher, decode, discover_key, encode
+from vigenere import Language, break_cipher, decode, discover_key, encode
 
 
 class Test(unittest.TestCase):

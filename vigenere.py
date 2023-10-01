@@ -100,6 +100,7 @@ def find_repeated_groups(text: str):
 
     while (i < len(text)):
         j = i + 1
+        last_matches = None
         while (j < len(text)):
             search_string = text[i:j]
             matches_index = [m.start()
