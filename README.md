@@ -1,8 +1,8 @@
-# Vigenere Cipher
+# Vigenère Cipher
 
 ## Description
 
-This is a simple implementation of the Vigenere Cipher in Python. It is a polyalphabetic cipher that uses a key to encrypt and decrypt a message. The key is a word or phrase that is repeated until it is the same length as the message. The key is then used to shift the letters of the message to create the ciphertext. The ciphertext can then be decrypted by shifting the letters back to their original positions. The program can also break the cipher text using the Kasiski Examination.
+This is a simple implementation of the Vigenère Cipher in Python. It is a polyalphabetic cipher that uses a key to encrypt and decrypt a message. The key is a word or phrase that is repeated until it is the same length as the message. The key is then used to shift the letters of the message to create the ciphertext. The ciphertext can then be decrypted by shifting the letters back to their original positions. The program can also break the cipher text using the Kasiski Examination.
 
 ## Module Usage
 
